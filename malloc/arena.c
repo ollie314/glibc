@@ -19,6 +19,11 @@
 
 #include <stdbool.h>
 
+#if BUILD_TUNABLES
+# define TUNABLE_NAMESPACE malloc
+# include <elf/dl-tunables.h>
+#endif
+
 /* Compile-time constants.  */
 
 #define HEAP_MIN_SIZE (32 * 1024)
@@ -204,6 +209,15 @@ __malloc_fork_unlock_child (void)
   mutex_init (&list_lock);
 }
 
+#if BUILD_TUNABLES
+void
+DL_TUNABLE_CALLBACK (set_mallopt_check) (void *unused)
+{
+  if (check_action != 0)
+    __malloc_check_init ();
+}
+
+#else
 /* Initialization routine. */
 #include <string.h>
 extern char **_environ;
@@ -238,6 +252,7 @@ next_env_entry (char ***position)
 
   return result;
 }
+#endif
 
 
 #ifdef SHARED
@@ -272,6 +287,24 @@ ptmalloc_init (void)
 #endif
 
   thread_arena = &main_arena;
+
+#if BUILD_TUNABLES
+  /* Ensure initialization/consolidation and do it under a lock so that a
+     thread attempting to use the arena in parallel waits on us till we
+     finish.  */
+  mutex_lock (&main_arena.mutex);
+  malloc_consolidate (&main_arena);
+
+  TUNABLE_SET_VAL_WITH_CALLBACK (check, &check_action, set_mallopt_check);
+  TUNABLE_SET_VAL (top_pad, &mp_.top_pad);
+  TUNABLE_SET_VAL (perturb, &perturb_byte);
+  TUNABLE_SET_VAL (mmap_threshold, &mp_.mmap_threshold);
+  TUNABLE_SET_VAL (trim_threshold, &mp_.trim_threshold);
+  TUNABLE_SET_VAL (mmap_max, &mp_.n_mmaps_max);
+  TUNABLE_SET_VAL (arena_max, &mp_.arena_max);
+  TUNABLE_SET_VAL (arena_test, &mp_.arena_test);
+  mutex_unlock (&main_arena.mutex);
+#else
   const char *s = NULL;
   if (__glibc_likely (_environ != NULL))
     {
@@ -340,6 +373,8 @@ ptmalloc_init (void)
       if (check_action != 0)
         __malloc_check_init ();
     }
+#endif
+
 #if HAVE_MALLOC_INIT_HOOK
   void (*hook) (void) = atomic_forced_read (__malloc_initialize_hook);
   if (hook != NULL)

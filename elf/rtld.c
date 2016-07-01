@@ -44,6 +44,10 @@
 
 #include <assert.h>
 
+#if BUILD_TUNABLES
+# include <dl-tunables.h>
+#endif
+
 /* Avoid PLT use for our local calls at startup.  */
 extern __typeof (__mempcpy) __mempcpy attribute_hidden;
 
@@ -2345,6 +2349,10 @@ process_envvars (enum mode *modep)
   char *envline;
   enum mode mode = normal;
   char *debug_output = NULL;
+
+#if BUILD_TUNABLES
+  __tunables_init (_environ);
+#endif
 
   /* This is the default place for profiling data file.  */
   GLRO(dl_profile_output)

@@ -1,0 +1,50 @@
+# Allowed attributes for tunables:
+#
+# type: Defaults to STRING
+# minval: Optional minimum acceptable value
+# maxval: Optional maximum acceptable value
+# env_alias: An alias environment variable
+# secure_env_alias: Specify whether the environment variable should be read for
+# setuid binaries.
+
+glibc {
+  malloc {
+    check {
+      type: INT_32
+      minval: 0
+      maxval: 3
+      env_alias: MALLOC_CHECK_
+      secure_env_alias: true
+    }
+    top_pad {
+      type: SIZE_T
+      env_alias: MALLOC_TOP_PAD_
+    }
+    perturb {
+      type: INT_32
+      minval: 0
+      maxval: 0xff
+      env_alias: MALLOC_PERTURB_
+    }
+    mmap_threshold {
+      type: SIZE_T
+      env_alias: MALLOC_MMAP_THRESHOLD_
+    }
+    trim_threshold {
+      type: SIZE_T
+      env_alias: MALLOC_TRIM_THRESHOLD_
+    }
+    mmap_max {
+      type: INT_32
+      env_alias: MALLOC_MMAP_MAX_
+    }
+    arena_max {
+      type: SIZE_T
+      env_alias: MALLOC_ARENA_MAX
+    }
+    arena_test {
+      type: SIZE_T
+      env_alias: MALLOC_ARENA_TEST
+    }
+  }
+}

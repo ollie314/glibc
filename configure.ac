@@ -395,6 +395,16 @@ if test "$build_pt_chown" = yes; then
   AC_DEFINE(HAVE_PT_CHOWN)
 fi
 
+AC_ARG_ENABLE([tunables],
+	      [AS_HELP_STRING([--enable-tunables],
+	       [Enable tunables support])],
+	      [build_tunables=$enableval],
+	      [build_tunables=no])
+AC_SUBST(build_tunables)
+if test "$build_tunables" = yes; then
+  AC_DEFINE(BUILD_TUNABLES)
+fi
+
 # The abi-tags file uses a fairly simplistic model for name recognition that
 # can't distinguish i486-pc-linux-gnu fully from i486-pc-gnu.  So we mutate a
 # $host_os of `gnu*' here to be `gnu-gnu*' just so that it can tell.
