@@ -1,7 +1,6 @@
-/* Return real part of complex double value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  PowerPC soft-float version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,15 +16,13 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
+#include "soft-supp.h"
 
-double
-__creal (double _Complex z)
+int
+fesetexcept (int excepts)
 {
-  return __real__ z;
+  __sim_exceptions_thread |= (excepts & FE_ALL_EXCEPT);
+  SIM_SET_GLOBAL (__sim_exceptions_global, __sim_exceptions_thread);
+
+  return 0;
 }
-weak_alias (__creal, creal)
-#ifdef NO_LONG_DOUBLE
-strong_alias (__creal, __creall)
-weak_alias (__creal, creall)
-#endif

@@ -1,7 +1,6 @@
-/* Return the complex absolute value of float complex value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  Alpha version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +16,16 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
-#include <math.h>
+#include <fenv_libc.h>
 
-float
-__cabsf (float _Complex z)
+int
+fesetexcept (int excepts)
 {
-  return __hypotf (__real__ z, __imag__ z);
+  unsigned long int tmp;
+
+  tmp = __ieee_get_fp_control ();
+  tmp |= excepts & SWCR_STATUS_MASK;
+  __ieee_set_fp_control (tmp);
+
+  return 0;
 }
-weak_alias (__cabsf, cabsf)

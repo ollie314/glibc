@@ -1,7 +1,6 @@
-/* Return complex conjugate of complex double value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  ARM version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,15 +16,23 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
+#include <fenv.h>
+#include <fpu_control.h>
+#include <arm-features.h>
 
-double _Complex
-__conj (double _Complex z)
+int
+fesetexcept (int excepts)
 {
-  return ~z;
+  fpu_control_t fpscr, new_fpscr;
+
+  /* Fail if a VFP unit isn't present unless nothing needs to be done.  */
+  if (!ARM_HAVE_VFP)
+    return (excepts != 0);
+
+  _FPU_GETCW (fpscr);
+  new_fpscr = fpscr | (excepts & FE_ALL_EXCEPT);
+  if (new_fpscr != fpscr)
+    _FPU_SETCW (new_fpscr);
+
+  return 0;
 }
-weak_alias (__conj, conj)
-#ifdef NO_LONG_DOUBLE
-strong_alias (__conj, __conjl)
-weak_alias (__conj, conjl)
-#endif

@@ -1,7 +1,6 @@
-/* Compute argument of complex float value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  x86_64 version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +16,16 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
-#include <math.h>
+#include <fenv.h>
 
-float
-__cargf (__complex__ float x)
+int
+fesetexcept (int excepts)
 {
-  return __atan2f (__imag__ x, __real__ x);
+  unsigned int mxcsr;
+
+  __asm__ ("stmxcsr %0" : "=m" (*&mxcsr));
+  mxcsr |= excepts & FE_ALL_EXCEPT;
+  __asm__ ("ldmxcsr %0" : : "m" (*&mxcsr));
+
+  return 0;
 }
-weak_alias (__cargf, cargf)

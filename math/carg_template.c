@@ -1,4 +1,4 @@
-/* Return complex conjugate of complex long double value.
+/* Compute argument of complex float type.
    Copyright (C) 1997-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
@@ -18,10 +18,16 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <complex.h>
+#include <math.h>
 
-long double _Complex
-__conjl (long double _Complex z)
+FLOAT
+M_DECL_FUNC (__carg) (CFLOAT x)
 {
-  return ~z;
+  return M_SUF (__atan2) (__imag__ x, __real__ x);
 }
-weak_alias (__conjl, conjl)
+
+declare_mgen_alias (__carg, carg)
+
+#if M_LIBM_NEED_COMPAT (carg)
+declare_mgen_libm_compat (__carg, carg)
+#endif

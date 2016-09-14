@@ -41,7 +41,11 @@ libm-support = s_lib_version s_matherr s_signgam			\
 	       fclrexcpt fgetexcptflg fraiseexcpt fsetexcptflg		\
 	       ftestexcept fegetround fesetround fegetenv feholdexcpt	\
 	       fesetenv feupdateenv t_exp fedisblxcpt feenablxcpt	\
-	       fegetexcept
+	       fegetexcept fesetexcept
+
+# Wrappers for these functions generated per type using a file named
+# <func>_template.c and the appropriate math-type-macros-<TYPE>.h.
+gen-libm-calls = cargF conjF cimagF crealF cabsF
 
 libm-calls =								  \
 	e_acosF e_acoshF e_asinF e_atan2F e_atanhF e_coshF e_expF e_fmodF \
@@ -59,13 +63,13 @@ libm-calls =								  \
 	w_ilogbF							  \
 	s_fpclassifyF s_fmaxF s_fminF s_fdimF s_nanF s_truncF		  \
 	s_remquoF e_log2F e_exp2F s_roundF s_nearbyintF s_sincosF	  \
-	conjF cimagF crealF cabsF cargF s_cexpF s_csinhF s_ccoshF s_clogF \
+	s_cexpF s_csinhF s_ccoshF s_clogF				  \
 	s_catanF s_casinF s_ccosF s_csinF s_ctanF s_ctanhF s_cacosF	  \
 	s_casinhF s_cacoshF s_catanhF s_csqrtF s_cpowF s_cprojF s_clog10F \
 	s_fmaF s_lrintF s_llrintF s_lroundF s_llroundF e_exp10F w_log2F	  \
 	s_issignalingF $(calls:s_%=m_%) x2y2m1F k_casinhF		  \
 	gamma_productF lgamma_negF lgamma_productF			  \
-	s_nextupF s_nextdownF
+	s_nextupF s_nextdownF $(gen-libm-calls)
 
 libm-compat-calls-ldouble-yes = w_lgamma_compatl k_standardl
 libm-compat-calls = w_lgamma_compatf w_lgamma_compat k_standard k_standardf \
@@ -146,7 +150,8 @@ tests = test-matherr test-fenv atest-exp atest-sincos atest-exp2 basic-test \
 	test-nearbyint-except-2 test-signgam-uchar test-signgam-uchar-init \
 	test-signgam-uint test-signgam-uint-init test-signgam-ullong \
 	test-signgam-ullong-init test-nan-overflow test-nan-payload \
-	test-fexcept test-fexcept-traps $(tests-static)
+	test-fexcept test-fexcept-traps test-fesetexcept \
+	test-fesetexcept-traps $(tests-static)
 tests-static = test-fpucw-static test-fpucw-ieee-static \
 	       test-signgam-uchar-static test-signgam-uchar-init-static \
 	       test-signgam-uint-static test-signgam-uint-init-static \
@@ -263,6 +268,29 @@ non-lib.a += libieee.a
 extra-objs += libieee.a ieee-math.o
 
 include ../Rules
+
+generated += $(addsuffix .c,$(call type-foreach,$(gen-libm-calls))) \
+	     gen-libm-templates.stmp
+
+# Create wrappers in the math build directory.
+$(objpfx)gen-libm-templates.stmp:
+	for gcall in $(gen-libm-calls); do                                \
+	  func=$${gcall%F*}$${gcall#*F};                                  \
+	  for type in $(foreach t,$(types),$(t)__$(type-$(t)-suffix)); do \
+	    suff=$${type#*__};                                            \
+	    type=$${type%__*};                                            \
+	    file=$(objpfx)$${gcall%F*}$${suff}$${gcall#*F}.c;             \
+	    (                                                             \
+	      echo "#include <math-type-macros-$${type}.h>";              \
+	      echo "#include <$${func}_template.c>";                      \
+	    ) > $${file};                                                 \
+	  done;                                                           \
+	done;                                                             \
+	echo > $(@)
+
+# Add dependency to ensure the generator runs prior.
+$(foreach t, $(call type-foreach, $(gen-libm-calls)), \
+             $(objpfx)$(t).c): $(objpfx)gen-libm-templates.stmp
 
 ifneq (no,$(PERL))
 # This must come after the inclusion of sysdeps Makefiles via Rules.

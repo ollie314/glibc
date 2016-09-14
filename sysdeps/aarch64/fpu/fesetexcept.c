@@ -1,7 +1,6 @@
-/* Compute argument of complex long double value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  AArch64 version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +16,19 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
-#include <math.h>
+#include <fenv.h>
+#include <fpu_control.h>
 
-long double
-__cargl (__complex__ long double x)
+int
+fesetexcept (int excepts)
 {
-  return __atan2l (__imag__ x, __real__ x);
+  fpu_fpsr_t fpsr;
+  fpu_fpsr_t fpsr_new;
+
+  _FPU_GETFPSR (fpsr);
+  fpsr_new = fpsr | (excepts & FE_ALL_EXCEPT);
+  if (fpsr != fpsr_new)
+    _FPU_SETFPSR (fpsr_new);
+
+  return 0;
 }
-weak_alias (__cargl, cargl)

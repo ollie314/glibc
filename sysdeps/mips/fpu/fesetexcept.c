@@ -1,7 +1,6 @@
-/* Return imaginary part of complex double value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  MIPS version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,15 +16,17 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
+#include <fenv.h>
+#include <fpu_control.h>
 
-double
-__cimag (double _Complex z)
+int
+fesetexcept (int excepts)
 {
-  return __imag__ z;
+  fpu_control_t temp;
+
+  _FPU_GETCW (temp);
+  temp |= excepts & FE_ALL_EXCEPT;
+  _FPU_SETCW (temp);
+
+  return 0;
 }
-weak_alias (__cimag, cimag)
-#ifdef NO_LONG_DOUBLE
-strong_alias (__cimag, __cimagl)
-weak_alias (__cimag, cimagl)
-#endif

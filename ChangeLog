@@ -1,3 +1,201 @@
+2016-08-17  Paul E. Murphy  <murphyp@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128/e_asinl.c:
+	Remove unused sqrtl declaration.
+
+2016-08-17  Paul E. Murphy  <murphyp@linux.vnet.ibm.com>
+
+	* math/Makefile: (gen-libm-templates.stmp): New rule.
+	(libm-calls): Move carg conj cimag and cabs into ...
+	(gen-libm-calls): New variable.
+	(generated): Inform Make objects from gen-libm-calls
+	may be generated.
+
+	* sysdeps/generic/math-type-macros.h: New file.
+	* sysdeps/generic/math-type-macros-float.h: Likewise.
+	* sysdeps/generic/math-type-macros-double.h: Likewise.
+	* sysdeps/generic/math-type-macros-ldouble.h: Likewise.
+	* sysdeps/ieee754/ldbl-opt/math-type-macros-double.h: Likewise.
+	* sysdeps/ieee754/ldbl-opt/math-type-macros-ldouble.h: Likewise.
+
+	* math/cabs.c: Refactor into
+	* math/cabs_template.c: new file.
+	* math/cabsf.c: Removed.
+	* math/cabsl.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cabsf.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cabsl.c: Removed.
+
+	* math/carg.c: Refactor into
+	* math/carg_template.c: new file.
+	* math/cargf.c: Removed.
+	* math/cargl.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cargf.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cargl.c: Removed.
+
+	* math/conj.c: Refactor into
+	* math/conj_template.c: new file.
+	* math/conjf.c: Removed.
+	* math/conjl.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/conjf.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/conjl.c: Removed.
+
+	* math/cimag.c: Refactor into
+	* math/cimag_template.c: new file.
+	* math/cimagf.c: Removed.
+	* math/cimagl.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cimagf.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cimagl.c: Removed.
+
+	* math/cimag.c: Refactor into
+	* math/cimag_template.c: new file.
+	* math/cimagf.c: Removed.
+	* math/cimagl.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cimagf.c: Removed.
+	* sysdeps/ieee754/ldbl-opt/cimagl.c: Removed.
+
+2016-08-17  Florian Weimer  <fweimer@redhat.com>
+
+	Reduce time to expected nptl/tst-once5 failure.
+	* nptl/tst-once5.cc (TIMEOUT): Define.
+
+2016-08-17  Florian Weimer  <fweimer@redhat.com>
+
+	[BZ #20452]
+	Avoid additional copies of objects in libc.a in static libraries.
+	* sysdeps/ia64/nptl/Makefile (libpthread-shared-only-routines):
+	Add ptw-sysdep, ptw-sigblock, ptw-sigprocmask.
+	* sysdeps/mips/Makefile (librt-shared-only-routines): Add
+	rt-sysdep.
+	* sysdeps/mips/nptl/Makefile (libpthread-shared-only-routines):
+	Add nptl-sysdep.
+	* sysdeps/s390/nptl/Makefile (libpthread-shared-only-routines):
+	Add ptw-sysdep.
+	* sysdeps/unix/alpha/Makefile (librt-shared-only-routines): Add
+	rt-sysdep.
+	* sysdeps/unix/sysv/linux/alpha/Makefile
+	(libpthread-shared-only-routines): Add ptw-sysdep,
+	ptw-sigprocmask, ptw-rt_sigaction.
+	* sysdeps/unix/sysv/linux/ia64/Makefile
+	(librt-shared-only-routines): Add rt-sysdep.
+	* sysdeps/unix/sysv/linux/i386/Makefile
+	(libpthread-shared-only-routines): Add libc-do-syscall.
+	* sysdeps/unix/sysv/linux/microblaze/Makefile
+	(libpthread-shared-only-routines): Add sysdep.
+	* sysdeps/unix/sysv/linux/powerpc/Makefile
+	(librt-shared-only-routines): Add rt-sysdep.
+	(libpthread-shared-only-routines): Add sysdep.
+	* sysdeps/unix/sysv/linux/s390/Makefile
+	(librt-shared-only-routines): Add rt-sysdep.
+	* sysdeps/unix/sysv/linux/sparc/Makefile
+	(librt-shared-only-routines): Add rt-sysdep.
+	(libpthread-shared-only-routines): Add sysdep.
+	* sysdeps/unix/sysv/linux/tile/Makefile
+	(libpthread-shared-only-routines): Likewise.
+
+2016-08-16  Joseph Myers  <joseph@codesourcery.com>
+
+	* soft-fp/extended.h [_FP_W_TYPE_SIZE < 64] (FP_UNPACK_RAW_E):
+	Mask implicit bit out of unpacked value.
+	[_FP_W_TYPE_SIZE < 64] (FP_UNPACK_RAW_EP): Likewise.
+	[_FP_W_TYPE_SIZE >= 64] (FP_UNPACK_RAW_E): Likewise.
+	[_FP_W_TYPE_SIZE >= 64] (FP_UNPACK_RAW_EP): Likewise.
+
+	* sysdeps/sparc/fpu/fesetexcept.c: New file.
+
+	* sysdeps/sh/sh4/fpu/fesetexcept.c: New file.
+
+	* sysdeps/s390/fpu/fesetexcept.c: New file.
+
+	* sysdeps/powerpc/fpu/fesetexcept.c: New file.
+	* sysdeps/powerpc/nofpu/fesetexcept.c: Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fesetexcept.c: Likewise.
+
+	* sysdeps/mips/fpu/fesetexcept.c: New file.
+
+	* sysdeps/m68k/fpu/fesetexcept.c: New file.
+
+	* sysdeps/ia64/fpu/fesetexcept.c: New file.
+
+	* sysdeps/hppa/fpu/fesetexcept.c: New file.
+
+	* sysdeps/arm/fesetexcept.c: New file.
+
+	* sysdeps/alpha/fpu/fesetexcept.c: New file.
+
+	* sysdeps/aarch64/fpu/fesetexcept.c: New file.
+
+	* math/fesetexcept.c: New file.
+	* sysdeps/i386/fpu/fesetexcept.c: Likewise.
+	* sysdeps/x86_64/fpu/fesetexcept.c: Likewise.
+	* math/fenv.h: Define
+	__GLIBC_INTERNAL_STARTING_HEADER_IMPLEMENTATION and include
+	<bits/libc-header-start.h> instead of including <features.h>.
+	[__GLIBC_USE (IEC_60559_BFP_EXT)] (fesetexcept): New function
+	declaration.
+	* manual/arith.texi (fesetexcept): Document function.
+	* math/Versions (fesetexcept): New libm symbol at version
+	GLIBC_2.25.
+	* math/Makefile (libm-support): Add fesetexcept.
+	(tests): Add test-fesetexcept and test-fesetexcept-traps.
+	* math/test-fesetexcept.c: New file.
+	* math/test-fesetexcept-traps.c: Likewise.
+	* sysdeps/nacl/libm.abilist: Update.
+	* sysdeps/unix/sysv/linux/aarch64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/alpha/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/arm/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/hppa/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/i386/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/m68k/coldfire/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/m68k/m680x0/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/microblaze/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips32/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/mips/mips64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/nios2/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libm.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libm.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/libm-le.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/libm.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-32/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/sh/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx32/libm.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/tile/tilegx/tilegx64/libm.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/tile/tilepro/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/x32/libm.abilist: Likewise.
+
+2016-08-16  Florian Weimer  <fweimer@redhat.com>
+
+	* nptl/tst-tls3.c (default_stack_size_in_mb, stack_size_in_mb):
+	New.
+	(do_test): Apply default_stack_size_in_mb if not set.
+	* nptl/tst-tls3-malloc.c (stack_size_in_mb): Override default.
+
+2016-08-15  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #20435]
+	CVE-2016-6323
+	* sysdeps/unix/sysv/linux/arm/setcontext.S (__startcontext): Mark
+	as .cantunwind.
+
+2016-08-12  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/powerpc/fpu/fsetexcptflg.c (__fesetexceptflag): Add
+	comment from fraiseexcpt.c.
+
+	* math/test-fexcept.c (feraiseexcept_exact): New function.
+	(test_set): Call feraiseexcept_exact instead of feraiseexcept.
+	(test_except): Likewise.
+
 2016-08-10  Joseph Myers  <joseph@codesourcery.com>
 
 	[BZ #20455]

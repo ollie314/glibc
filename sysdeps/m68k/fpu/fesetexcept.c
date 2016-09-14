@@ -1,7 +1,6 @@
-/* Return the complex absolute value of long double complex value.
-   Copyright (C) 1997-2016 Free Software Foundation, Inc.
+/* Set given exception flags.  M68K version.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +16,16 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <complex.h>
-#include <math.h>
+#include <fenv.h>
 
-long double
-__cabsl (long double _Complex z)
+int
+fesetexcept (int excepts)
 {
-  return __hypotl (__real__ z, __imag__ z);
+  fexcept_t fpsr;
+
+  __asm__ ("fmove%.l %/fpsr,%0" : "=dm" (fpsr));
+  fpsr |= excepts & FE_ALL_EXCEPT;
+  __asm__ __volatile__ ("fmove%.l %0,%/fpsr" : : "dm" (fpsr));
+
+  return 0;
 }
-weak_alias (__cabsl, cabsl)

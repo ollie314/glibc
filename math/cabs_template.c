@@ -1,4 +1,4 @@
-/* Return real part of complex long double value.
+/* Return the complex absolute value of complex float type.
    Copyright (C) 1997-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
@@ -18,10 +18,16 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <complex.h>
+#include <math.h>
 
-long double
-__creall (long double _Complex z)
+FLOAT
+M_DECL_FUNC (__cabs) (CFLOAT z)
 {
-  return __real__ z;
+  return M_SUF (__hypot) (__real__ z, __imag__ z);
 }
-weak_alias (__creall, creall)
+
+declare_mgen_alias (__cabs, cabs)
+
+#if M_LIBM_NEED_COMPAT (cabs)
+declare_mgen_libm_compat (__cabs, cabs)
+#endif
