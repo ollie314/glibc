@@ -30,6 +30,9 @@
 		i.e expf expl exp.
    FLOAT      - Resolves to the C typename of M_TYPE.
    CFLOAT     - Resolves to the complex typename of M_TYPE.
+   M_STRTO_NAN - Resolves to the internal libc function which
+		converts a string into the appropriate FLOAT nan
+		value.
 
   Optionally, these headers may inject a non-standard
   definition for the following:
@@ -37,6 +40,11 @@
   declare_mgen_alias(from,to)
       This exposes the appropriate symbol(s) for a
       function f of type FLOAT.
+
+  declare_mgen_alias_2(from,to,to2)
+      This exposes the appropriate symbol(s) for a
+      function f of type FLOAT when it is aliased
+      to two symbols.
 
   M_LIBM_NEED_COMPAT(func)
       This is utilized in macro context to indicate
@@ -69,7 +77,7 @@
 #define __M_CONCAT(a,b) a ## b
 #define __M_CONCATX(a,b) __M_CONCAT(a,b)
 
-#define M_NAN M_SUF (__nan) ("")
+#define M_NAN M_SUF (__builtin_nan) ("")
 #define M_MAX_EXP __M_CONCATX (M_PFX, _MAX_EXP)
 #define M_MIN __M_CONCATX (M_PFX, _MIN)
 #define M_MAX __M_CONCATX (M_PFX, _MAX)
@@ -110,6 +118,13 @@
 /* If the type does not declare special aliasing, use the default.  */
 #ifndef declare_mgen_alias
 # define declare_mgen_alias(from, to) weak_alias (M_SUF (from), M_SUF (to))
+#endif
+
+/* Likewise, if two aliases are derived from the same symbol.  */
+#ifndef declare_mgen_alias_2
+# define declare_mgen_alias_2(from, to, to2)  \
+ declare_mgen_alias (from, to)		      \
+ declare_mgen_alias (from, to2)
 #endif
 
 /* Do not generate anything for compat symbols by default.  */

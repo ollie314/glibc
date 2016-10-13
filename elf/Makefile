@@ -23,7 +23,7 @@ include ../Makeconfig
 
 headers		= elf.h bits/elfclass.h link.h bits/link.h
 routines	= $(all-dl-routines) dl-support dl-iteratephdr \
-		  dl-addr enbl-secure dl-profstub \
+		  dl-addr dl-addr-obj enbl-secure dl-profstub \
 		  dl-origin dl-libc dl-sym dl-tsd dl-sysdep
 
 # The core dynamic linking functions are in libc for the static and
@@ -149,7 +149,7 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 tst-nodelete) \
 	 tst-initorder tst-initorder2 tst-relsort1 tst-null-argv \
 	 tst-ptrguard1 tst-tlsalign tst-tlsalign-extern tst-nodelete-opened \
-	 tst-nodelete2 tst-audit11 tst-audit12 tst-dlsym-error
+	 tst-nodelete2 tst-audit11 tst-audit12 tst-dlsym-error tst-noload
 #	 reldep9
 ifeq ($(build-hardcoded-path-in-tests),yes)
 tests += tst-dlopen-aout
@@ -317,6 +317,16 @@ tests += tst-prelink
 ifeq ($(run-built-tests),yes)
 tests-special += $(objpfx)tst-prelink-cmp.out
 endif
+endif
+
+# The test requires shared _and_ PIE because the executable
+# unit test driver must be able to link with the shared object
+# that is going to eventually go into an installed DSO.
+ifeq (yesyes,$(have-fpie)$(build-shared))
+tests += tst-_dl_addr_inside_object
+tests-pie += tst-_dl_addr_inside_object
+$(objpfx)tst-_dl_addr_inside_object: $(objpfx)dl-addr-obj.os
+CFLAGS-tst-_dl_addr_inside_object.c += $(PIE-ccflag)
 endif
 
 include ../Rules
@@ -554,6 +564,7 @@ $(objpfx)tst-null-argv: $(objpfx)tst-null-argv-lib.so
 $(objpfx)tst-tlsalign: $(objpfx)tst-tlsalign-lib.so
 $(objpfx)tst-nodelete-opened.out: $(objpfx)tst-nodelete-opened-lib.so
 $(objpfx)tst-nodelete-opened: $(libdl)
+$(objpfx)tst-noload: $(libdl)
 
 $(objpfx)tst-tlsalign-extern: $(objpfx)tst-tlsalign-vars.o
 $(objpfx)tst-tlsalign-extern-static: $(objpfx)tst-tlsalign-vars.o

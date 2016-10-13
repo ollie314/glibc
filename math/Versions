@@ -215,6 +215,8 @@ libm {
     nextdown; nextdownf; nextdownl;
   }
   GLIBC_2.25 {
-    fesetexcept;
+    fesetexcept; fetestexceptflag; fegetmode; fesetmode;
+    __iscanonicall; __iseqsigf; __iseqsig; __iseqsigl;
+    totalorder; totalorderf; totalorderl;
   }
 }

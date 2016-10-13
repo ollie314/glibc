@@ -380,8 +380,15 @@ __END_NAMESPACE_C99
 #endif
 
 #if __GLIBC_USE (IEC_60559_BFP_EXT)
+/* Test equality.  */
+__MATHDECL_1 (int, __iseqsig,, (_Mdouble_ __x, _Mdouble_ __y));
+
 /* Test for signaling NaN.  */
 __MATHDECL_1 (int, __issignaling,, (_Mdouble_ __value))
+     __attribute__ ((__const__));
+
+/* Total order operation.  */
+__MATHDECL_1 (int, totalorder,, (_Mdouble_ __x, _Mdouble_ __y))
      __attribute__ ((__const__));
 #endif
 
